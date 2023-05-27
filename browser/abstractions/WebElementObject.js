@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebElementObject = void 0;
-const selenium4_9_1 = require("selenium4.9");
+const selenium4_1 = require("selenium4");
 /**
  * It creates WebElement objects to control specific web elements - the most basic subdivision of a website.
  */
@@ -39,7 +39,7 @@ class WebElementObject {
         let webElements = [];
         if (this.webLocator.IDLocator) {
             try {
-                webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.id(this.webLocator.IDLocator)), timeout);
+                webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.id(this.webLocator.IDLocator)), timeout);
                 if (webElements.length > 0) {
                     this.webElement = webElements[0];
                     return webElements[0];
@@ -48,7 +48,7 @@ class WebElementObject {
             catch (error) { }
         }
         try {
-            webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.css(this.webLocator.CSSLocator)), timeout);
+            webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.css(this.webLocator.CSSLocator)), timeout);
             if (webElements.length > 0) {
                 this.webElement = webElements[0];
                 return webElements[0];
@@ -56,7 +56,7 @@ class WebElementObject {
         }
         catch (error) { }
         try {
-            webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.css(this.webLocator.CSSLocator2)), timeout);
+            webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.css(this.webLocator.CSSLocator2)), timeout);
             if (webElements.length > 0) {
                 this.webElement = webElements[0];
                 return webElements[0];
@@ -65,7 +65,7 @@ class WebElementObject {
         catch (error) { }
         if (this.webLocator.CSSLocator3) {
             try {
-                webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.css(this.webLocator.CSSLocator3)), timeout);
+                webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.css(this.webLocator.CSSLocator3)), timeout);
                 if (webElements.length > 0) {
                     this.webElement = webElements[0];
                     return webElements[0];
@@ -74,7 +74,7 @@ class WebElementObject {
             catch (error) { }
         }
         try {
-            webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.xpath(this.webLocator.XPath)), timeout);
+            webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.xpath(this.webLocator.XPath)), timeout);
             if (webElements.length > 0) {
                 this.webElement = webElements[0];
                 return webElements[0];
@@ -90,12 +90,12 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .click();
         }
     }
     async clickByLinkText(linkText, timeout = WebElementObject.defaultWaitTime) {
-        const webElements = await this.webDriver.waitForElements(selenium4_9_1.until.elementsLocated(selenium4_9_1.By.linkText(linkText)), timeout);
+        const webElements = await this.webDriver.waitForElements(selenium4_1.until.elementsLocated(selenium4_1.By.linkText(linkText)), timeout);
         if (webElements.length > 0) {
             return await webElements[0].click();
         }
@@ -106,7 +106,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .getText();
         }
     }
@@ -116,7 +116,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .clear();
         }
     }
@@ -126,10 +126,10 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .clear();
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .sendKeys(str);
         }
     }
@@ -139,7 +139,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .sendKeys(str);
         }
     }
@@ -149,7 +149,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .submit();
         }
     }
@@ -159,7 +159,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .isDisplayed();
         }
     }
@@ -169,7 +169,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .isEnabled();
         }
     }
@@ -179,7 +179,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .isSelected();
         }
     }
@@ -189,7 +189,7 @@ class WebElementObject {
             webElement = await this.findWebElement(timeout);
         if (webElement) {
             return await this.webDriver
-                .waitForElement(selenium4_9_1.until.elementIsVisible(webElement), timeout)
+                .waitForElement(selenium4_1.until.elementIsVisible(webElement), timeout)
                 .takeScreenshot();
         }
     }

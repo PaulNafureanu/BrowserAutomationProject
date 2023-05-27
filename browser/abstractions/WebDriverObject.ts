@@ -8,7 +8,7 @@ import {
   WebDriver,
   WebElement,
   WebElementCondition,
-} from "selenium4.9";
+} from "selenium4";
 import { Options as ChromeOptions } from "selenium4/chrome";
 
 /**
@@ -30,23 +30,11 @@ export interface WebDriverOptions {
 export class WebDriverObject {
   static readonly defaultWebDriverOptions: WebDriverOptions = {
     userProfile: "Default",
-    userdataDir: path.join(__dirname, "./../../userdata"),
-    downloadDir: path.join(
-      __dirname,
-      "./../../../WindowsController/resources/download/"
-    ),
-    uploadDir: path.join(
-      __dirname,
-      "./../../../WindowsController/resources/upload/"
-    ),
-    screenshotsDir: path.join(
-      __dirname,
-      "./../../../WindowsController/resources/screenshots/"
-    ),
-    pageSourcesDir: path.join(
-      __dirname,
-      "./../../../WindowsController/resources/pages/"
-    ),
+    userdataDir: path.join(__dirname, "./../userdata"),
+    downloadDir: path.join(__dirname, "./../../resources/download/"),
+    uploadDir: path.join(__dirname, "./../../resources/upload/"),
+    screenshotsDir: path.join(__dirname, "./../../resources/screens/"),
+    pageSourcesDir: path.join(__dirname, "./../../resources/sources/"),
     isHeadless: false,
   };
 

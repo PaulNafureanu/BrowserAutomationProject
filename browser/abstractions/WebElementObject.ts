@@ -1,4 +1,4 @@
-import { By, WebElement, until } from "selenium4.9";
+import { By, WebElement, until } from "selenium4";
 import { WebDriverObject } from "./WebDriverObject";
 
 export interface WebLocator {

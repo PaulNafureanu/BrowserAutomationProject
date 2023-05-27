@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebDriverObject = void 0;
 const path = require("node:path");
 const fs = require("node:fs");
-const selenium4_9_1 = require("selenium4.9");
+const selenium4_1 = require("selenium4");
 const chrome_1 = require("selenium4/chrome");
 /**
  * It creates Chrome WebDriver objects to control the Chrome browser.
@@ -11,11 +11,11 @@ const chrome_1 = require("selenium4/chrome");
 class WebDriverObject {
     static defaultWebDriverOptions = {
         userProfile: "Default",
-        userdataDir: path.join(__dirname, "./../../userdata"),
-        downloadDir: path.join(__dirname, "./../../../WindowsController/resources/download/"),
-        uploadDir: path.join(__dirname, "./../../../WindowsController/resources/upload/"),
-        screenshotsDir: path.join(__dirname, "./../../../WindowsController/resources/screenshots/"),
-        pageSourcesDir: path.join(__dirname, "./../../../WindowsController/resources/pages/"),
+        userdataDir: path.join(__dirname, "./../userdata"),
+        downloadDir: path.join(__dirname, "./../../resources/download/"),
+        uploadDir: path.join(__dirname, "./../../resources/upload/"),
+        screenshotsDir: path.join(__dirname, "./../../resources/screens/"),
+        pageSourcesDir: path.join(__dirname, "./../../resources/sources/"),
         isHeadless: false,
     };
     chromeWebDriver;
@@ -30,7 +30,7 @@ class WebDriverObject {
         if (options)
             this.currentWebDriverOptions = options;
         // Create a builder for chrome web driver
-        const builder = new selenium4_9_1.Builder().forBrowser("chrome");
+        const builder = new selenium4_1.Builder().forBrowser("chrome");
         // Define the path to download and userdata directories
         const { userdataDir, downloadDir, userProfile, isHeadless } = this.currentWebDriverOptions;
         // Define and set chrome builder options

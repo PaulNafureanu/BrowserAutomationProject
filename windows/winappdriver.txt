@@ -1,0 +1,11 @@
+Install & Run WinAppDriver
+1. Download the Windows Application Driver installer from https://github.com/Microsoft/WinAppDriver/releases
+2. Run the installer on a Windows 10 machine where your application under test is installed and will be tested
+3. Enable Developer Mode in Windows settings
+4. Run WinAppDriver.exe from the installation directory (E.g. C:\Program Files (x86)\Windows Application Driver)
+
+Windows Application Driver will then be running on the test machine listening to requests on the default
+IP address and port (127.0.0.1:4723).
+
+Don't forget to set the path to the WinAppDriver in Environment Variables to make it possible to start winappdriver
+from the command prompt window, otherwise, the winServer in the processes folder will crash.

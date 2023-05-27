@@ -1,4 +1,4 @@
-import { By, until } from "selenium4.9";
+import { By, until } from "selenium4";
 import { WebPageObject } from "../../../abstractions/WebPageObject";
 import {
   WebElementObject,
