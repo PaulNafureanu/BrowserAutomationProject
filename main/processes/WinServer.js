@@ -2,11 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WinServer = void 0;
 const WinProcess_1 = require("./WinProcess");
+/**
+ * It starts the Windows Application Driver server listening for requests at: http://127.0.0.1:4723/
+ * The WinAppDriver is a Windows interface useful at automating windows apps and forms similar with a WebDriver.
+ * Please make sure that the Windows machine being automated has
+ * the path for WinAppDriver in the Environment Variables set correctly.
+ */
 class WinServer {
     static defaultWinServerOptions = {
         initWith: "CMDDetached",
     };
     process;
+    /**
+     * It starts the Windows Server with the Windows Application Driver running and listening for requests.
+     * @param options Windows Server Options that sets how the WinServer initiates itself.
+     */
     constructor(options = WinServer.defaultWinServerOptions) {
         switch (options.initWith) {
             case "InsideShell": {
@@ -25,9 +35,16 @@ class WinServer {
             }
         }
     }
+    /**
+     * It quits the Windows Server killing the Windows Application Driver process immediately.
+     */
     quit() {
         WinProcess_1.WinProcess.killWinProcess("WinAppDriver.exe");
     }
+    /**
+     * It quits the Windows Server killing the Windows Application Driver process after some timeout.
+     * @param ms The timeout in ms.
+     */
     quitAfter(ms) {
         WinProcess_1.WinProcess.killWinProcess("WinAppDriver.exe", ms);
     }
