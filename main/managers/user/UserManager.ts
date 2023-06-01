@@ -1,5 +1,6 @@
 import readline from "node:readline";
 import { ManagerObject } from "../abstractions/ManagerObject";
+import { ValidationRule } from "./commands/ValidationRule";
 
 export class UserManager extends ManagerObject {
   private static instance: UserManager;
@@ -15,22 +16,20 @@ export class UserManager extends ManagerObject {
   // Function to handle user input
   public static handleUserInput(input: string) {
     // Process user input and execute corresponding functions
-    switch (input) {
-      case "execute": {
-        console.log("execute something");
-        break;
-      }
-      case "open": {
-        console.log("open something");
-        break;
-      }
+    const userInput = input.trim().toLocaleLowerCase();
+
+    switch (userInput) {
       case "exit": {
         console.log("Exiting...");
         UserManager.reader.close();
         return;
       }
+      case "": {
+        break;
+      }
       default: {
-        console.log("Invalid command!");
+        const validationResult = ValidationRule.validateUserCommand(userInput);
+        console.log("\n", "Result: ", validationResult, "\n");
         break;
       }
     }

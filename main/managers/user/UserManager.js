@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserManager = void 0;
 const node_readline_1 = __importDefault(require("node:readline"));
 const ManagerObject_1 = require("../abstractions/ManagerObject");
+const ValidationRule_1 = require("./commands/ValidationRule");
 class UserManager extends ManagerObject_1.ManagerObject {
     static instance;
     static reader = node_readline_1.default.createInterface({
@@ -18,22 +19,19 @@ class UserManager extends ManagerObject_1.ManagerObject {
     // Function to handle user input
     static handleUserInput(input) {
         // Process user input and execute corresponding functions
-        switch (input) {
-            case "execute": {
-                console.log("execute something");
-                break;
-            }
-            case "open": {
-                console.log("open something");
-                break;
-            }
+        const userInput = input.trim().toLocaleLowerCase();
+        switch (userInput) {
             case "exit": {
                 console.log("Exiting...");
                 UserManager.reader.close();
                 return;
             }
+            case "": {
+                break;
+            }
             default: {
-                console.log("Invalid command!");
+                const validationResult = ValidationRule_1.ValidationRule.validateUserCommand(userInput);
+                console.log("\n", "Result: ", validationResult, "\n");
                 break;
             }
         }

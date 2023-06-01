@@ -7,7 +7,7 @@
  * Example of a command: execute create:video for:youtube-ytchannel
  * Keywords to identify the type of the command: execute, create, for.
  */
-interface UserCommandDefinition {
+export interface UserCommandDefinition {
   execute: boolean;
   create: boolean;
   for: boolean;
@@ -44,6 +44,15 @@ export class CommandType {
   private static readonly UserCommandKeywordList = Object.keys(
     CommandType.UndefinedCommandDefinition
   ) as (keyof UserCommandDefinition)[];
+
+  // Set here more accepted values for command keywords:
+  private static readonly AcceptedValuesForCommandKeywords: {
+    [key in keyof UserCommandDefinition]: string[];
+  } = {
+    execute: [],
+    create: ["video"],
+    for: ["youtube-channel1", "youtube-channel2"],
+  };
 
   private constructor() {}
 
@@ -91,5 +100,60 @@ export class CommandType {
       if (commandType.CommandDefinition[keyword]) number++;
     }
     return number;
+  }
+
+  public static getAcceptedValuesForCommandKeywords(commandKeyword: string) {
+    if (
+      Object.hasOwnProperty.call(
+        CommandType.AcceptedValuesForCommandKeywords,
+        commandKeyword
+      )
+    ) {
+      const key = commandKeyword as keyof UserCommandDefinition;
+      return CommandType.AcceptedValuesForCommandKeywords[key];
+    } else return [];
+  }
+
+  public static getSpecificUserCommandKeywordList<
+    T extends string[] | (keyof UserCommandDefinition)[]
+  >(commandType: UserCommandType) {
+    // Define a list of truthy keywords used for this user command from the command type definition
+    let userCommandKeywordList = [];
+    let keyCommandType: keyof UserCommandDefinition;
+    for (keyCommandType in commandType.CommandDefinition) {
+      if (commandType.CommandDefinition[keyCommandType]) {
+        userCommandKeywordList.push(keyCommandType);
+      }
+    }
+    return userCommandKeywordList as T;
+  }
+
+  public static getRedundantKeyword(
+    commandPartsByUser: string[],
+    commandKeywordsByDef: string[] = CommandType.UserCommandKeywordList
+  ) {
+    for (let part of commandPartsByUser) {
+      let foundKeyForPart = false; // Let's assume that the part has no key
+      for (let key of commandKeywordsByDef) {
+        if (part.includes(key)) {
+          foundKeyForPart = true; // The part has a key, therefore we found the key for this part
+          break;
+        }
+      }
+      if (!foundKeyForPart) {
+        return part; // We didn't find any key for this part, therefore this is the redundant keyword
+      }
+    }
+  }
+
+  public static getKeywordFromString(
+    userInput: string,
+    commandKeywordsByDef: (keyof UserCommandDefinition)[] = CommandType.UserCommandKeywordList
+  ) {
+    for (const key of commandKeywordsByDef) {
+      if (userInput.includes(key)) {
+        return key;
+      }
+    }
   }
 }
