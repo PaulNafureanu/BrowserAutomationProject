@@ -1,6 +1,7 @@
 import readline from "node:readline";
 import { ManagerObject } from "../abstractions/ManagerObject";
-import { ValidationRule } from "./commands/ValidationRule";
+import { CommandValidator } from "./commands/CommandValidator";
+import { GeneralManager } from "../general/GeneralManager";
 
 export class UserManager extends ManagerObject {
   private static instance: UserManager;
@@ -28,8 +29,15 @@ export class UserManager extends ManagerObject {
         break;
       }
       default: {
-        const validationResult = ValidationRule.validateUserCommand(userInput);
-        console.log("\n", "Result: ", validationResult, "\n");
+        const { isValid, commandType, commandInput } =
+          CommandValidator.validateUserCommand(userInput);
+        console.log(
+          "\n",
+          "Result: ",
+          { isValid, commandType, commandInput },
+          "\n"
+        );
+        if (isValid && commandInput) GeneralManager.run(commandInput);
         break;
       }
     }

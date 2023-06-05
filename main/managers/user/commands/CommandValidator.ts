@@ -5,32 +5,35 @@ import {
   KEYWORD_MISSING,
   KEYWORD_REDUNDANT,
   KEYWORD_WRITTEN_INCORRECTLY,
-  UserCommandMessages,
+  CommandMessager,
   VALUE_MISSING,
   VALUE_NOT_ACCEPTED,
-} from "./CommandMessages";
+} from "./CommandMessager";
 
 import {
+  CommandDefiner,
+  CommandDefinition,
   CommandType,
-  UserCommandDefinition,
-  UserCommandType,
-} from "./CommandType";
+} from "./CommandDefiner";
 
-export interface ValidationResult {
-  isValid: boolean;
-  commandType: UserCommandType | undefined;
-}
+export type CommandInput = {
+  [key in keyof Partial<CommandDefinition>]: string;
+};
 
-interface SuccededRule {
+interface SuccededRule<T extends CommandType | CommandInput | undefined> {
   isValid: true;
-  data?: UserCommandType;
+  data: T;
 }
 interface FailedRule {
   isValid: false;
   error: ERROR_TYPE;
 }
-type RuleResult = FailedRule | SuccededRule;
 
+export interface ValidationResult {
+  isValid: boolean;
+  commandType: CommandType | undefined;
+  commandInput: CommandInput | undefined;
+}
 /**
  * Validation Rules for User Commands:
  * 1. Every user command must start with the keyword "execute".
@@ -38,7 +41,7 @@ type RuleResult = FailedRule | SuccededRule;
  * 3. The number of truthy keywords in the command type definition has to equal the number of command parts.
  * 4. In every user command, the value of any command keyword must be an accepted value for that keyword type.
  */
-export class ValidationRule {
+export class CommandValidator {
   private constructor() {}
 
   /**
@@ -53,7 +56,7 @@ export class ValidationRule {
         error: { name: "EXECUTE_NOT_FOUND" } as EXECUTE_NOT_FOUND,
       } as FailedRule;
     }
-    return { isValid: true } as SuccededRule;
+    return { isValid: true, data: undefined } as SuccededRule<undefined>;
   }
 
   /**
@@ -62,14 +65,14 @@ export class ValidationRule {
    * @returns the command type if the user command is valid, an error otherwise.
    */
   private static validateCommandTypeRule(userInput: string) {
-    const commandType = CommandType.getCommandType(userInput);
+    const commandType = CommandDefiner.getCommandType(userInput);
     if (!commandType) {
       return {
         isValid: false,
         error: { name: "COMMAND_NOT_FOUND" } as COMMAND_NOT_FOUND,
       } as FailedRule;
     }
-    return { isValid: true, data: commandType } as SuccededRule;
+    return { isValid: true, data: commandType } as SuccededRule<CommandType>;
   }
 
   /**
@@ -80,7 +83,7 @@ export class ValidationRule {
    */
   private static validateCommandPartsRule(
     userInput: string,
-    commandType: UserCommandType
+    commandType: CommandType
   ) {
     const commandParts = userInput.split(" ");
     const validCommandPartsLen = commandParts.filter(
@@ -88,18 +91,18 @@ export class ValidationRule {
     ).length;
 
     const numberOfTruthyKeywords =
-      CommandType.getNumberOfTruthyKeywords(commandType);
+      CommandDefiner.getNumberOfTruthyKeywords(commandType);
 
     if (validCommandPartsLen === numberOfTruthyKeywords)
-      return { isValid: true } as SuccededRule;
+      return { isValid: true, data: undefined } as SuccededRule<undefined>;
     else {
       // const commandKeywords = Object.keys(commandType.CommandDefinition);
       const specificCommandKeywords =
-        CommandType.getSpecificUserCommandKeywordList<
-          (keyof UserCommandDefinition)[]
-        >(commandType);
+        CommandDefiner.getTruthyKeywordList<(keyof CommandDefinition)[]>(
+          commandType
+        );
 
-      const redundantKey = CommandType.getRedundantKeyword(
+      const redundantKey = CommandDefiner.getRedundantKeyword(
         commandParts,
         specificCommandKeywords
       );
@@ -136,7 +139,7 @@ export class ValidationRule {
    */
   private static validateAcceptedValuesRule(
     userInput: string,
-    commandType: UserCommandType
+    commandType: CommandType
   ) {
     // Define the command parts (key-value pairs)
     const commandParts = userInput.split(" ");
@@ -146,16 +149,17 @@ export class ValidationRule {
 
     // Define the list of truthy keywords used for this user command from the command type definition
     let userCommandKeywordList =
-      CommandType.getSpecificUserCommandKeywordList<string[]>(commandType);
+      CommandDefiner.getTruthyKeywordList<string[]>(commandType);
 
+    let commandInput: { [key: string]: string } = {};
     for (const keyValue of validCommandParts) {
       const [keywordCommand, keywordValue] = keyValue.split(":");
 
       //Check if the keyword command is an accepted keyword by the command type
       if (!userCommandKeywordList.includes(keywordCommand)) {
-        const keyword = CommandType.getKeywordFromString(
+        const keyword = CommandDefiner.getKeywordFromString(
           keyValue,
-          userCommandKeywordList as (keyof UserCommandDefinition)[]
+          userCommandKeywordList as (keyof CommandDefinition)[]
         );
 
         if (keyword) {
@@ -166,7 +170,7 @@ export class ValidationRule {
               keyValuePair: keyValue,
               keywordName: keyword,
               acceptedValues:
-                CommandType.getAcceptedValuesForCommandKeywords(keyword),
+                CommandDefiner.getAcceptedValuesForKeyword(keyword),
             } as KEYWORD_WRITTEN_INCORRECTLY,
           } as FailedRule;
         } else {
@@ -184,7 +188,7 @@ export class ValidationRule {
 
       //Check if the value of the keyword is an accepted value for that keyword type
       const acceptedValues =
-        CommandType.getAcceptedValuesForCommandKeywords(keywordCommand);
+        CommandDefiner.getAcceptedValuesForKeyword(keywordCommand);
       if (!(acceptedValues && acceptedValues.includes(keywordValue))) {
         if (keywordValue) {
           return {
@@ -207,9 +211,13 @@ export class ValidationRule {
           } as FailedRule;
         }
       }
+      commandInput[keywordCommand] = keywordValue;
     }
 
-    return { isValid: true } as SuccededRule;
+    return {
+      isValid: true,
+      data: commandInput as CommandInput,
+    } as SuccededRule<CommandInput>;
   }
 
   /**
@@ -221,40 +229,45 @@ export class ValidationRule {
     const prepUserInput = userInput.trim().toLowerCase();
 
     let error: ERROR_TYPE | undefined = undefined;
-    let commandType: UserCommandType | undefined = undefined;
+    let commandType: CommandType | undefined = undefined;
+
+    let ruleResult:
+      | FailedRule
+      | SuccededRule<undefined>
+      | SuccededRule<CommandType>
+      | SuccededRule<CommandInput>;
 
     //Check first rule
-    let ruleResult = ValidationRule.validateExecuteRule(prepUserInput);
+    ruleResult = CommandValidator.validateExecuteRule(prepUserInput);
     if (ruleResult.isValid) {
       //Check second rule
-      ruleResult = ValidationRule.validateCommandTypeRule(prepUserInput);
+      ruleResult = CommandValidator.validateCommandTypeRule(prepUserInput);
       if (ruleResult.isValid) {
-        if (ruleResult.data) {
-          //Check third rule
-          commandType = ruleResult.data;
-          ruleResult = ValidationRule.validateCommandPartsRule(
+        //Check third rule
+        commandType = ruleResult.data;
+        ruleResult = CommandValidator.validateCommandPartsRule(
+          prepUserInput,
+          commandType
+        );
+
+        if (ruleResult.isValid) {
+          // Check third rule
+          ruleResult = CommandValidator.validateAcceptedValuesRule(
             prepUserInput,
             commandType
           );
 
           if (ruleResult.isValid) {
-            // Check third rule
-            ruleResult = ValidationRule.validateAcceptedValuesRule(
-              prepUserInput,
-              commandType
-            );
-
-            if (ruleResult.isValid) {
-              return {
-                isValid: true,
-                commandType: commandType,
-              } as ValidationResult;
-            } else {
-              error = ruleResult.error;
-            }
+            return {
+              isValid: true,
+              commandType: commandType,
+              commandInput: ruleResult.data,
+            } as ValidationResult;
           } else {
             error = ruleResult.error;
           }
+        } else {
+          error = ruleResult.error;
         }
       } else {
         error = ruleResult.error;
@@ -265,11 +278,15 @@ export class ValidationRule {
 
     // Write the error if there is one.
     if (error) {
-      UserCommandMessages.WriteErrorConsole(
-        UserCommandMessages.getErrorMessages(error)
+      CommandMessager.ConsoleErrorWriter(
+        CommandMessager.getErrorMessages(error)
       );
     }
 
-    return { isValid: false, commandType: commandType } as ValidationResult;
+    return {
+      isValid: false,
+      commandType: commandType,
+      commandInput: undefined,
+    } as ValidationResult;
   }
 }

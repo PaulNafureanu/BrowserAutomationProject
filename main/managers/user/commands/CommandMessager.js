@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserCommandMessages = void 0;
+exports.CommandMessager = void 0;
 /**
  * Validation Rules for User Commands:
  * 1(ExecuteRule). Every user command must start with the keyword "execute".
@@ -8,7 +8,7 @@ exports.UserCommandMessages = void 0;
  * 3(CommandPartsRule). The number of truthy keywords in the command type definition has to equal the number of command parts.
  * 4(AcceptedValuesRule). In every user command, the value of any command keyword must be an accepted value for that keyword type.
  */
-class UserCommandMessages {
+class CommandMessager {
     static ConsoleColors = {
         fonts: {
             FgBlack: "\x1b[30m",
@@ -33,8 +33,8 @@ class UserCommandMessages {
             BgGray: "\x1b[100m",
         },
     };
-    static WriteErrorConsole(input) {
-        const { FgRed, FgWhite } = UserCommandMessages.ConsoleColors.fonts;
+    static ConsoleErrorWriter(input) {
+        const { FgRed, FgWhite } = CommandMessager.ConsoleColors.fonts;
         console.log(FgRed, input, FgWhite);
     }
     constructor() { }
@@ -94,5 +94,5 @@ Write 'help commands' to list all the available user commands.
         }
     }
 }
-exports.UserCommandMessages = UserCommandMessages;
-//# sourceMappingURL=CommandMessages.js.map
+exports.CommandMessager = CommandMessager;
+//# sourceMappingURL=CommandMessager.js.map

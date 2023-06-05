@@ -2,6 +2,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneralManager = void 0;
 const ManagerObject_1 = require("../abstractions/ManagerObject");
+/**
+ * App = Input + Process + Ouput + Logger.
+ * Process -> session1 + session2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
+ *
+ * A run of the BAP App consists of:
+ * - Capturing the input: Responsibility delegated to the User Manager.
+ * - Processing the input: Responsibility delegated to the General Manager.
+ * - Generating the output: Responsibility delegated to the Browser and Windows Manager.
+ * - Logging the details of the run: Responsibility delegated to the Log Manager.
+ *
+ * A process can be composed of multiple sessions that run either in parallel or sequentially.
+ * Each session, in turn, consists of different sequential stages. In other words:
+ * The process is made up of individual sessions, and these sessions can either run concurrently (in parallel)
+ * or one after the other (sequentially). Furthermore, each session can be further broken down
+ * into different sequential stages, representing the steps or components within that session.
+ */
 class GeneralManager extends ManagerObject_1.ManagerObject {
     static instance;
     constructor() {
@@ -12,6 +28,9 @@ class GeneralManager extends ManagerObject_1.ManagerObject {
             GeneralManager.instance = new GeneralManager();
         }
         return GeneralManager.instance;
+    }
+    static run(userCommand) {
+        console.log("GM: ", userCommand);
     }
 }
 exports.GeneralManager = GeneralManager;

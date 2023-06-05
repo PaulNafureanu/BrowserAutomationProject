@@ -53,7 +53,7 @@ export type ERROR_TYPE =
  * 3(CommandPartsRule). The number of truthy keywords in the command type definition has to equal the number of command parts.
  * 4(AcceptedValuesRule). In every user command, the value of any command keyword must be an accepted value for that keyword type.
  */
-export class UserCommandMessages {
+export class CommandMessager {
   public static ConsoleColors = {
     fonts: {
       FgBlack: "\x1b[30m",
@@ -79,8 +79,8 @@ export class UserCommandMessages {
     },
   };
 
-  public static WriteErrorConsole(input: any) {
-    const { FgRed, FgWhite } = UserCommandMessages.ConsoleColors.fonts;
+  public static ConsoleErrorWriter(input: any) {
+    const { FgRed, FgWhite } = CommandMessager.ConsoleColors.fonts;
     console.log(FgRed, input, FgWhite);
   }
 

@@ -1,4 +1,23 @@
 import { ManagerObject } from "../abstractions/ManagerObject";
+import { CommandType } from "../user/commands/CommandDefiner";
+import { CommandInput } from "../user/commands/CommandValidator";
+
+/**
+ * App = Input + Process + Ouput + Logger.
+ * Process -> session1 + session2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
+ *
+ * A run of the BAP App consists of:
+ * - Capturing the input: Responsibility delegated to the User Manager.
+ * - Processing the input: Responsibility delegated to the General Manager.
+ * - Generating the output: Responsibility delegated to the Browser and Windows Manager.
+ * - Logging the details of the run: Responsibility delegated to the Log Manager.
+ *
+ * A process can be composed of multiple sessions that run either in parallel or sequentially.
+ * Each session, in turn, consists of different sequential stages. In other words:
+ * The process is made up of individual sessions, and these sessions can either run concurrently (in parallel)
+ * or one after the other (sequentially). Furthermore, each session can be further broken down
+ * into different sequential stages, representing the steps or components within that session.
+ */
 
 export class GeneralManager extends ManagerObject {
   private static instance: GeneralManager;
@@ -11,6 +30,10 @@ export class GeneralManager extends ManagerObject {
       GeneralManager.instance = new GeneralManager();
     }
     return GeneralManager.instance;
+  }
+
+  public static run(userCommand: CommandInput) {
+    console.log("GM: ", userCommand);
   }
 }
 
