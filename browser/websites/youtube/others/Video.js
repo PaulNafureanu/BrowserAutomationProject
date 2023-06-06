@@ -3,23 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Video = void 0;
 const path = require("node:path");
 class Video {
-    fileName;
-    filePath;
-    thumbnailPath;
-    title;
-    playlist;
-    audience;
-    promotion;
-    automaticChapters;
-    automaticPlaces;
-    tags;
-    language;
-    captionCertification;
-    license;
-    shortRemixing;
-    category;
-    sortBy;
-    showLikeCount;
     constructor(filePath) {
         this.fileName = path.basename(filePath);
         this.filePath = filePath;

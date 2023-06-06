@@ -1,1 +1,1 @@
-{"version":3,"file":"WebComponentObject.js","sourceRoot":"","sources":["WebComponentObject.ts"],"names":[],"mappings":";;;AAEA;;GAEG;AACH,MAAa,kBAAkB;IACnB,SAAS,CAAkB;IAErC;;OAEG;IACH,YAAY,SAA0B;QACpC,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;IAC7B,CAAC;CACF;AATD,gDASC"}
+{"version":3,"file":"WebComponentObject.js","sourceRoot":"","sources":["WebComponentObject.ts"],"names":[],"mappings":";;;AAEA;;GAEG;AACH,MAAa,kBAAkB;IAG7B;;OAEG;IACH,YAAY,SAA0B;QACpC,IAAI,CAAC,SAAS,GAAG,SAAS,CAAC;IAC7B,CAAC;CACF;AATD,gDASC"}

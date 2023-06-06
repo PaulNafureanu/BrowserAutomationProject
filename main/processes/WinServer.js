@@ -9,10 +9,6 @@ const WinProcess_1 = require("./WinProcess");
  * the path for WinAppDriver in the Environment Variables set correctly.
  */
 class WinServer {
-    static defaultWinServerOptions = {
-        initWith: "CMDDetached",
-    };
-    process;
     /**
      * It starts the Windows Server with the Windows Application Driver running and listening for requests.
      * @param options Windows Server Options that sets how the WinServer initiates itself.
@@ -50,4 +46,7 @@ class WinServer {
     }
 }
 exports.WinServer = WinServer;
+WinServer.defaultWinServerOptions = {
+    initWith: "CMDDetached",
+};
 //# sourceMappingURL=WinServer.js.map

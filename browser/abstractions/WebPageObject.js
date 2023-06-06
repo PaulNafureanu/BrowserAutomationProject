@@ -5,8 +5,6 @@ exports.WebPageObject = void 0;
  * It creates Page objects to control specific pages of a website.
  */
 class WebPageObject {
-    url;
-    webDriver;
     /**
      * It creates Page Objects that will contain the general representation of a website's page with all their page components.
      */

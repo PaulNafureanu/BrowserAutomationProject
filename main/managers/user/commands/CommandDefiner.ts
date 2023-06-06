@@ -40,7 +40,7 @@ export class CommandDefiner {
   /**
    * An array defining all available user commands.
    */
-  private static readonly Types: CommandType[] = [
+  public static readonly Types: CommandType[] = [
     {
       CommandName: "SimpleUserCommand",
       CommandDefinition: { execute: true, create: true, for: true },

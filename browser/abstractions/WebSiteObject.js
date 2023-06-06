@@ -7,22 +7,13 @@ const WebHomePageObject_1 = require("./pages/WebHomePageObject");
  * It creates WebSite Objects that will contain the general representation of websites, the navigation and their page objects.
  */
 class WebSiteObject {
-    // The states and defaults of the website object
-    static defaultWebSiteOptions = {
-        webDriverOptions: WebDriverObject_1.WebDriverObject.defaultWebDriverOptions,
-        implicitWait: 0,
-    };
-    // The url of our website object
-    webSiteURL = "";
-    // Web Site State (urls and pages) used for this website object
-    webSiteState;
-    URLs;
-    pages;
     /**
      * Construct and return a WebSite object to navigate within.
      * @param     {WebSiteObject}    options     Give external options for the session and the construction of website object.
      */
     constructor(options = WebSiteObject.defaultWebSiteOptions) {
+        // The url of our website object
+        this.webSiteURL = "";
         this.webSiteState = {
             webDriver: new WebDriverObject_1.WebDriverObject(options.webDriverOptions),
             implicitWait: options.implicitWait,
@@ -156,4 +147,9 @@ class WebSiteObject {
     }
 }
 exports.WebSiteObject = WebSiteObject;
+// The states and defaults of the website object
+WebSiteObject.defaultWebSiteOptions = {
+    webDriverOptions: WebDriverObject_1.WebDriverObject.defaultWebDriverOptions,
+    implicitWait: 0,
+};
 //# sourceMappingURL=WebSiteObject.js.map

@@ -8,33 +8,6 @@ exports.CommandDefiner = void 0;
  *  A command type is basically a command name associated with a user command definition.
  */
 class CommandDefiner {
-    /**
-     * The default command definition.
-     */
-    static UndefinedCommandDefinition = {
-        execute: false,
-        create: false,
-        for: false,
-    };
-    /**
-     * An array defining all available user commands.
-     */
-    static Types = [
-        {
-            CommandName: "SimpleUserCommand",
-            CommandDefinition: { execute: true, create: true, for: true },
-        },
-    ];
-    /**
-     * An array containing all the keywords from all the user commands available.
-     */
-    static UserCommandKeywordList = Object.keys(CommandDefiner.UndefinedCommandDefinition);
-    // Set here more accepted values for command keywords:
-    static AcceptedValuesForCommandKeywords = {
-        execute: [],
-        create: ["video"],
-        for: ["youtube-channel1", "youtube-channel2"],
-    };
     constructor() { }
     /**
      * Scans the input string for valid keywords and constructs a command definition based on those keywords
@@ -154,4 +127,31 @@ class CommandDefiner {
     }
 }
 exports.CommandDefiner = CommandDefiner;
+/**
+ * The default command definition.
+ */
+CommandDefiner.UndefinedCommandDefinition = {
+    execute: false,
+    create: false,
+    for: false,
+};
+/**
+ * An array defining all available user commands.
+ */
+CommandDefiner.Types = [
+    {
+        CommandName: "SimpleUserCommand",
+        CommandDefinition: { execute: true, create: true, for: true },
+    },
+];
+/**
+ * An array containing all the keywords from all the user commands available.
+ */
+CommandDefiner.UserCommandKeywordList = Object.keys(CommandDefiner.UndefinedCommandDefinition);
+// Set here more accepted values for command keywords:
+CommandDefiner.AcceptedValuesForCommandKeywords = {
+    execute: [],
+    create: ["video"],
+    for: ["youtube-channel1", "youtube-channel2"],
+};
 //# sourceMappingURL=CommandDefiner.js.map

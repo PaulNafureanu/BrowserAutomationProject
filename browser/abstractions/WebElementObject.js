@@ -6,24 +6,6 @@ const selenium4_1 = require("selenium4");
  * It creates WebElement objects to control specific web elements - the most basic subdivision of a website.
  */
 class WebElementObject {
-    // Static fields for the class
-    static defaultWaitTime = 200;
-    static NullWebLocator = {
-        IDLocator: "",
-        CSSLocator: "",
-        CSSLocator2: "",
-        CSSLocator3: "",
-        XPath: "",
-    };
-    // Main states of the web element object
-    webLocator;
-    webDriver;
-    /* States of an web element:
-     * (WebElement) - there is a defined web element on the webpage.
-     * (undefined) - there was no check done yet to test if there is such a web element.
-     * (null) - there is no defined web element on the webpage, throw error.
-     */
-    webElement;
     constructor(webDriver, webLocator) {
         this.webDriver = webDriver;
         this.webLocator = webLocator;
@@ -195,4 +177,13 @@ class WebElementObject {
     }
 }
 exports.WebElementObject = WebElementObject;
+// Static fields for the class
+WebElementObject.defaultWaitTime = 200;
+WebElementObject.NullWebLocator = {
+    IDLocator: "",
+    CSSLocator: "",
+    CSSLocator2: "",
+    CSSLocator3: "",
+    XPath: "",
+};
 //# sourceMappingURL=WebElementObject.js.map

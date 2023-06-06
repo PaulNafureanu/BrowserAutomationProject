@@ -2,6 +2,14 @@ import readline from "node:readline";
 import { ManagerObject } from "../abstractions/ManagerObject";
 import { CommandValidator } from "./commands/CommandValidator";
 import { GeneralManager } from "../general/GeneralManager";
+import { CommandDefiner } from "./commands/CommandDefiner";
+
+// type UserInput = { //TODO:
+//   [K in keyof typeof CommandDefiner.Types]: {
+//     CommandName: (typeof CommandDefiner.Types)[number]["CommandName"];
+//     CommandInput: (typeof CommandDefiner.Types)[number]["CommandDefinition"];
+//   };
+// }[keyof typeof CommandDefiner.Types];
 
 export class UserManager extends ManagerObject {
   private static instance: UserManager;

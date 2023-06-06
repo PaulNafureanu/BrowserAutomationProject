@@ -8,12 +8,13 @@ const node_readline_1 = __importDefault(require("node:readline"));
 const ManagerObject_1 = require("../abstractions/ManagerObject");
 const CommandValidator_1 = require("./commands/CommandValidator");
 const GeneralManager_1 = require("../general/GeneralManager");
+// type UserInput = { //TODO:
+//   [K in keyof typeof CommandDefiner.Types]: {
+//     CommandName: (typeof CommandDefiner.Types)[number]["CommandName"];
+//     CommandInput: (typeof CommandDefiner.Types)[number]["CommandDefinition"];
+//   };
+// }[keyof typeof CommandDefiner.Types];
 class UserManager extends ManagerObject_1.ManagerObject {
-    static instance;
-    static reader = node_readline_1.default.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
     constructor() {
         super();
     }
@@ -55,4 +56,8 @@ class UserManager extends ManagerObject_1.ManagerObject {
     }
 }
 exports.UserManager = UserManager;
+UserManager.reader = node_readline_1.default.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
 //# sourceMappingURL=UserManager.js.map

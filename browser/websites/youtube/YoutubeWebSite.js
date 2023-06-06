@@ -10,23 +10,23 @@ const YoutubeStudio_1 = require("./pages/YoutubeStudio");
  * the navigation within with its page and components objects.
  */
 class YoutubeWebSite extends WebSiteObject_1.WebSiteObject {
-    webSiteURL = "https://www.youtube.com/";
-    URLs = {
-        HomePage: this.webSiteURL,
-        ChannelDashboard: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
-        YoutubeStudio: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
-    };
-    pages = {
-        HomePage: new YoutubeHomePage_1.YoutubeHomePage(this.webSiteURL, this.webSiteState.webDriver),
-        ChannelDashboard: new ChannelDashboardPage_1.YoutubeChannelDashboardPage(this.URLs.ChannelDashboard, this.webSiteState.webDriver),
-        YoutubeStudio: new YoutubeStudio_1.YoutubeStudio(this.URLs.YoutubeStudio, this.webSiteState.webDriver),
-    };
     /**
      * Construct and return a Youtube WebSite object to navigate within.
      * @param     {WebSiteObject}    options     Give external options for the session and the construction of the youtube website object.
      */
     constructor(options) {
         super(options);
+        this.webSiteURL = "https://www.youtube.com/";
+        this.URLs = {
+            HomePage: this.webSiteURL,
+            ChannelDashboard: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
+            YoutubeStudio: "https://studio.youtube.com/channel/UCopd8ft4OZRkVa2nG7ZA4HQ",
+        };
+        this.pages = {
+            HomePage: new YoutubeHomePage_1.YoutubeHomePage(this.webSiteURL, this.webSiteState.webDriver),
+            ChannelDashboard: new ChannelDashboardPage_1.YoutubeChannelDashboardPage(this.URLs.ChannelDashboard, this.webSiteState.webDriver),
+            YoutubeStudio: new YoutubeStudio_1.YoutubeStudio(this.URLs.YoutubeStudio, this.webSiteState.webDriver),
+        };
     }
     /**
      * Schedules a command to load the youtube home page object.

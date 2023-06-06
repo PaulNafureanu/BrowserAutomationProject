@@ -9,23 +9,13 @@ const chrome_1 = require("selenium4/chrome");
  * It creates Chrome WebDriver objects to control the Chrome browser.
  */
 class WebDriverObject {
-    static defaultWebDriverOptions = {
-        userProfile: "Default",
-        userdataDir: path.join(__dirname, "./../userdata"),
-        downloadDir: path.join(__dirname, "./../../resources/download/"),
-        uploadDir: path.join(__dirname, "./../../resources/upload/"),
-        screenshotsDir: path.join(__dirname, "./../../resources/screens/"),
-        pageSourcesDir: path.join(__dirname, "./../../resources/sources/"),
-        isHeadless: false,
-    };
-    chromeWebDriver;
-    currentWebDriverOptions = WebDriverObject.defaultWebDriverOptions;
     /**
      * Construct and return a Chrome WebDriver object to start a session with a Chrome browser and control it.
      * @param     {WebDriverOptions}    options     Give options to the chrome webdriver.
      * @return                                      Returns a chrome thenable web driver instance.
      */
     constructor(options) {
+        this.currentWebDriverOptions = WebDriverObject.defaultWebDriverOptions;
         // Set default options if they are not given.
         if (options)
             this.currentWebDriverOptions = options;
@@ -188,4 +178,13 @@ class WebDriverObject {
     }
 }
 exports.WebDriverObject = WebDriverObject;
+WebDriverObject.defaultWebDriverOptions = {
+    userProfile: "Default",
+    userdataDir: path.join(__dirname, "./../userdata"),
+    downloadDir: path.join(__dirname, "./../../resources/download/"),
+    uploadDir: path.join(__dirname, "./../../resources/upload/"),
+    screenshotsDir: path.join(__dirname, "./../../resources/screens/"),
+    pageSourcesDir: path.join(__dirname, "./../../resources/sources/"),
+    isHeadless: false,
+};
 //# sourceMappingURL=WebDriverObject.js.map

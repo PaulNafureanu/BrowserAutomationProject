@@ -9,30 +9,6 @@ exports.CommandMessager = void 0;
  * 4(AcceptedValuesRule). In every user command, the value of any command keyword must be an accepted value for that keyword type.
  */
 class CommandMessager {
-    static ConsoleColors = {
-        fonts: {
-            FgBlack: "\x1b[30m",
-            FgRed: "\x1b[31m",
-            FgGreen: "\x1b[32m",
-            FgYellow: "\x1b[33m",
-            FgBlue: "\x1b[34m",
-            FgMagenta: "\x1b[35m",
-            FgCyan: "\x1b[36m",
-            FgWhite: "\x1b[37m",
-            FgGray: "\x1b[90m",
-        },
-        backgrounds: {
-            BgBlack: "\x1b[40m",
-            BgRed: "\x1b[41m",
-            BgGreen: "\x1b[42m",
-            BgYellow: "\x1b[43m",
-            BgBlue: "\x1b[44m",
-            BgMagenta: "\x1b[45m",
-            BgCyan: "\x1b[46m",
-            BgWhite: "\x1b[47m",
-            BgGray: "\x1b[100m",
-        },
-    };
     static ConsoleErrorWriter(input) {
         const { FgRed, FgWhite } = CommandMessager.ConsoleColors.fonts;
         console.log(FgRed, input, FgWhite);
@@ -95,4 +71,28 @@ Write 'help commands' to list all the available user commands.
     }
 }
 exports.CommandMessager = CommandMessager;
+CommandMessager.ConsoleColors = {
+    fonts: {
+        FgBlack: "\x1b[30m",
+        FgRed: "\x1b[31m",
+        FgGreen: "\x1b[32m",
+        FgYellow: "\x1b[33m",
+        FgBlue: "\x1b[34m",
+        FgMagenta: "\x1b[35m",
+        FgCyan: "\x1b[36m",
+        FgWhite: "\x1b[37m",
+        FgGray: "\x1b[90m",
+    },
+    backgrounds: {
+        BgBlack: "\x1b[40m",
+        BgRed: "\x1b[41m",
+        BgGreen: "\x1b[42m",
+        BgYellow: "\x1b[43m",
+        BgBlue: "\x1b[44m",
+        BgMagenta: "\x1b[45m",
+        BgCyan: "\x1b[46m",
+        BgWhite: "\x1b[47m",
+        BgGray: "\x1b[100m",
+    },
+};
 //# sourceMappingURL=CommandMessager.js.map

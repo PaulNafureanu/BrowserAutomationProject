@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrowserManager = void 0;
 const ManagerObject_1 = require("../abstractions/ManagerObject");
 class BrowserManager extends ManagerObject_1.ManagerObject {
-    static instance;
     constructor() {
         super();
     }

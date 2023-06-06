@@ -19,7 +19,6 @@ const ManagerObject_1 = require("../abstractions/ManagerObject");
  * into different sequential stages, representing the steps or components within that session.
  */
 class GeneralManager extends ManagerObject_1.ManagerObject {
-    static instance;
     constructor() {
         super();
     }
