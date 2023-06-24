@@ -1,15 +1,13 @@
 import readline from "node:readline";
 import { ManagerObject } from "../abstractions/ManagerObject";
-import { CommandValidator } from "./commands/CommandValidator";
 import { GeneralManager } from "../general/GeneralManager";
-import { CommandDefiner } from "./commands/CommandDefiner";
+import { CommandInput, CommandValidator } from "./commands/CommandValidator";
+import { CommandType } from "./commands/CommandDefiner";
 
-// type UserInput = { //TODO:
-//   [K in keyof typeof CommandDefiner.Types]: {
-//     CommandName: (typeof CommandDefiner.Types)[number]["CommandName"];
-//     CommandInput: (typeof CommandDefiner.Types)[number]["CommandDefinition"];
-//   };
-// }[keyof typeof CommandDefiner.Types];
+export type UserCommandInput<CT extends CommandType> = {
+  commandType: CT;
+  commandInput: CommandInput<CT>;
+};
 
 export class UserManager extends ManagerObject {
   private static instance: UserManager;
@@ -37,15 +35,21 @@ export class UserManager extends ManagerObject {
         break;
       }
       default: {
-        const { isValid, commandType, commandInput } =
+        // Validate the user command entered in CLI
+        const validationResult =
           CommandValidator.validateUserCommand(userInput);
-        console.log(
-          "\n",
-          "Result: ",
-          { isValid, commandType, commandInput },
-          "\n"
-        );
-        if (isValid && commandInput) GeneralManager.run(commandInput);
+
+        // Print the validation result into the CLI
+        console.log("\n", "Result: ", validationResult, "\n");
+
+        // Run the command if valid
+        const { isValid, commandType, commandInput } = validationResult;
+        if (isValid && commandType && commandInput) {
+          GeneralManager.run({
+            commandType: commandType,
+            commandInput: commandInput,
+          } as UserCommandInput<typeof commandType>);
+        }
         break;
       }
     }

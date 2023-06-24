@@ -1,6 +1,20 @@
 "use strict";
+/**
+ * Add more error types if you want to extend the validation rules and error messages
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommandMessager = void 0;
+exports.CommandMessager = exports.ERROR_NAME = void 0;
+var ERROR_NAME;
+(function (ERROR_NAME) {
+    ERROR_NAME[ERROR_NAME["NO_ERROR"] = 0] = "NO_ERROR";
+    ERROR_NAME[ERROR_NAME["EXECUTE_NOT_FOUND"] = 1] = "EXECUTE_NOT_FOUND";
+    ERROR_NAME[ERROR_NAME["COMMAND_NOT_FOUND"] = 2] = "COMMAND_NOT_FOUND";
+    ERROR_NAME[ERROR_NAME["KEYWORD_MISSING"] = 3] = "KEYWORD_MISSING";
+    ERROR_NAME[ERROR_NAME["KEYWORD_WRITTEN_INCORRECTLY"] = 4] = "KEYWORD_WRITTEN_INCORRECTLY";
+    ERROR_NAME[ERROR_NAME["KEYWORD_REDUNDANT"] = 5] = "KEYWORD_REDUNDANT";
+    ERROR_NAME[ERROR_NAME["VALUE_MISSING"] = 6] = "VALUE_MISSING";
+    ERROR_NAME[ERROR_NAME["VALUE_NOT_ACCEPTED"] = 7] = "VALUE_NOT_ACCEPTED";
+})(ERROR_NAME || (exports.ERROR_NAME = ERROR_NAME = {}));
 /**
  * Validation Rules for User Commands:
  * 1(ExecuteRule). Every user command must start with the keyword "execute".
@@ -13,29 +27,37 @@ class CommandMessager {
         const { FgRed, FgWhite } = CommandMessager.ConsoleColors.fonts;
         console.log(FgRed, input, FgWhite);
     }
+    // public static getReadableError(error: ERROR_TYPE) {
+    //   return {
+    //     name: ERROR_NAME[error.code],
+    //     details: error,
+    //   } ;
+    // }
     constructor() { }
     static getErrorMessages(err) {
-        switch (err.name) {
-            case "EXECUTE_NOT_FOUND":
+        switch (err.code) {
+            case ERROR_NAME.NO_ERROR:
+                return `No errors.`;
+            case ERROR_NAME.EXECUTE_NOT_FOUND:
                 return `
 The command does not start with the keyword 'execute'.
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "COMMAND_NOT_FOUND":
+            case ERROR_NAME.COMMAND_NOT_FOUND:
                 return `
 The command is not recognized in the system.
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "KEYWORD_MISSING":
+            case ERROR_NAME.KEYWORD_MISSING:
                 return `
-Keyword missing in key-value pair '${err.keyValuePair}'. Please ensure that all the specific command keywords are written.
+Keyword missing. Please ensure that all the specific command keywords are written.
 The keywords for the command '${err.commandName}' are: [${err.commandKeywords}].
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "KEYWORD_WRITTEN_INCORRECTLY":
+            case ERROR_NAME.KEYWORD_WRITTEN_INCORRECTLY:
                 return `
 Key-value pair '${err.keyValuePair}' written incorrectly.
 Please ensure that all the specific command keywords are written correctly in the form of 'key:value' pairs.
@@ -43,7 +65,7 @@ For the above keyword '${err.keywordName}', follow the syntax and choose one acc
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "KEYWORD_REDUNDANT":
+            case ERROR_NAME.KEYWORD_REDUNDANT:
                 return `
 Keyword '${err.keywordName}' is redundant.
 Please ensure that only the specific command keywords are written.
@@ -51,14 +73,14 @@ The keywords for the command '${err.commandName}' are: [${err.commandKeywords}].
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "VALUE_MISSING":
+            case ERROR_NAME.VALUE_MISSING:
                 return `
 Value for the keyword '${err.keywordName}' is missing. Expected 'key:value' pair.
 The accepted values for the keyword '${err.keywordName}' are: [${err.acceptedValues}].
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
-            case "VALUE_NOT_ACCEPTED":
+            case ERROR_NAME.VALUE_NOT_ACCEPTED:
                 return `
 Value '${err.valueName}' for the keyword '${err.keywordName}' is not accepted.
 The accepted values for the keyword '${err.keywordName}' are: [${err.acceptedValues}]
@@ -66,7 +88,7 @@ Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
             default:
-                return "";
+                let _neverTest = err;
         }
     }
 }

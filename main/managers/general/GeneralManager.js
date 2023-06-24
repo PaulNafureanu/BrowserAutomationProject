@@ -28,8 +28,10 @@ class GeneralManager extends ManagerObject_1.ManagerObject {
         }
         return GeneralManager.instance;
     }
-    static run(userCommand) {
-        console.log("GM: ", userCommand);
+    static run(userCommandInput) {
+        // switch(command name or command type)
+        // case: do something with the input command values
+        console.log("GM: ", userCommandInput);
     }
 }
 exports.GeneralManager = GeneralManager;

@@ -6,14 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserManager = void 0;
 const node_readline_1 = __importDefault(require("node:readline"));
 const ManagerObject_1 = require("../abstractions/ManagerObject");
-const CommandValidator_1 = require("./commands/CommandValidator");
 const GeneralManager_1 = require("../general/GeneralManager");
-// type UserInput = { //TODO:
-//   [K in keyof typeof CommandDefiner.Types]: {
-//     CommandName: (typeof CommandDefiner.Types)[number]["CommandName"];
-//     CommandInput: (typeof CommandDefiner.Types)[number]["CommandDefinition"];
-//   };
-// }[keyof typeof CommandDefiner.Types];
+const CommandValidator_1 = require("./commands/CommandValidator");
 class UserManager extends ManagerObject_1.ManagerObject {
     constructor() {
         super();
@@ -32,10 +26,18 @@ class UserManager extends ManagerObject_1.ManagerObject {
                 break;
             }
             default: {
-                const { isValid, commandType, commandInput } = CommandValidator_1.CommandValidator.validateUserCommand(userInput);
-                console.log("\n", "Result: ", { isValid, commandType, commandInput }, "\n");
-                if (isValid && commandInput)
-                    GeneralManager_1.GeneralManager.run(commandInput);
+                // Validate the user command entered in CLI
+                const validationResult = CommandValidator_1.CommandValidator.validateUserCommand(userInput);
+                // Print the validation result into the CLI
+                console.log("\n", "Result: ", validationResult, "\n");
+                // Run the command if valid
+                const { isValid, commandType, commandInput } = validationResult;
+                if (isValid && commandType && commandInput) {
+                    GeneralManager_1.GeneralManager.run({
+                        commandType: commandType,
+                        commandInput: commandInput,
+                    });
+                }
                 break;
             }
         }

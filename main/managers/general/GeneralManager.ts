@@ -1,4 +1,5 @@
 import { ManagerObject } from "../abstractions/ManagerObject";
+import { UserCommandInput } from "../user/UserManager";
 import { CommandType } from "../user/commands/CommandDefiner";
 import { CommandInput } from "../user/commands/CommandValidator";
 
@@ -32,8 +33,12 @@ export class GeneralManager extends ManagerObject {
     return GeneralManager.instance;
   }
 
-  public static run(userCommand: CommandInput) {
-    console.log("GM: ", userCommand);
+  public static run<CT extends CommandType>(
+    userCommandInput: UserCommandInput<CT>
+  ) {
+    // switch(command name or command type)
+    // case: do something with the input command values
+    console.log("GM: ", userCommandInput);
   }
 }
 

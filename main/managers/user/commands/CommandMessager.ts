@@ -1,50 +1,55 @@
 /**
  * Add more error types if you want to extend the validation rules and error messages
  */
-export interface EXECUTE_NOT_FOUND {
-  name: "EXECUTE_NOT_FOUND";
-}
-export interface COMMAND_NOT_FOUND {
-  name: "COMMAND_NOT_FOUND";
-}
-export interface KEYWORD_MISSING {
-  name: "KEYWORD_MISSING";
-  commandName: string;
-  commandKeywords: string[];
-  keyValuePair: string;
-}
-export interface KEYWORD_WRITTEN_INCORRECTLY {
-  name: "KEYWORD_WRITTEN_INCORRECTLY";
-  keyValuePair: string;
-  keywordName: string;
-  acceptedValues: string[];
-}
-export interface KEYWORD_REDUNDANT {
-  name: "KEYWORD_REDUNDANT";
-  commandName: string;
-  commandKeywords: string[];
-  keywordName: string;
-}
-export interface VALUE_MISSING {
-  name: "VALUE_MISSING";
-  keywordName: string;
-  acceptedValues: string[];
-}
-export interface VALUE_NOT_ACCEPTED {
-  name: "VALUE_NOT_ACCEPTED";
-  keywordName: string;
-  valueName: string;
-  acceptedValues: string[];
+
+export enum ERROR_NAME {
+  NO_ERROR,
+  EXECUTE_NOT_FOUND,
+  COMMAND_NOT_FOUND,
+  KEYWORD_MISSING,
+  KEYWORD_WRITTEN_INCORRECTLY,
+  KEYWORD_REDUNDANT,
+  VALUE_MISSING,
+  VALUE_NOT_ACCEPTED,
 }
 
 export type ERROR_TYPE =
-  | EXECUTE_NOT_FOUND
-  | COMMAND_NOT_FOUND
-  | KEYWORD_MISSING
-  | KEYWORD_WRITTEN_INCORRECTLY
-  | KEYWORD_REDUNDANT
-  | VALUE_MISSING
-  | VALUE_NOT_ACCEPTED;
+  | { name?: string; code: ERROR_NAME.NO_ERROR }
+  | { name?: string; code: ERROR_NAME.EXECUTE_NOT_FOUND }
+  | { name?: string; code: ERROR_NAME.COMMAND_NOT_FOUND }
+  | {
+      name?: string;
+      code: ERROR_NAME.KEYWORD_MISSING;
+      commandName: string;
+      commandKeywords: readonly string[];
+    }
+  | {
+      name?: string;
+      code: ERROR_NAME.KEYWORD_WRITTEN_INCORRECTLY;
+      keyValuePair: string;
+      keywordName: string;
+      acceptedValues: readonly string[];
+    }
+  | {
+      name?: string;
+      code: ERROR_NAME.KEYWORD_REDUNDANT;
+      commandName: string;
+      commandKeywords: readonly string[];
+      keywordName: string;
+    }
+  | {
+      name?: string;
+      code: ERROR_NAME.VALUE_MISSING;
+      keywordName: string;
+      acceptedValues: readonly string[];
+    }
+  | {
+      name?: string;
+      code: ERROR_NAME.VALUE_NOT_ACCEPTED;
+      keywordName: string;
+      valueName: string;
+      acceptedValues: readonly string[];
+    };
 
 /**
  * Validation Rules for User Commands:
@@ -84,32 +89,42 @@ export class CommandMessager {
     console.log(FgRed, input, FgWhite);
   }
 
+  // public static getReadableError(error: ERROR_TYPE) {
+  //   return {
+  //     name: ERROR_NAME[error.code],
+  //     details: error,
+  //   } ;
+  // }
+
   private constructor() {}
   public static getErrorMessages(err: ERROR_TYPE) {
-    switch (err.name) {
-      case "EXECUTE_NOT_FOUND":
+    switch (err.code) {
+      case ERROR_NAME.NO_ERROR:
+        return `No errors.`;
+
+      case ERROR_NAME.EXECUTE_NOT_FOUND:
         return `
 The command does not start with the keyword 'execute'.
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "COMMAND_NOT_FOUND":
+      case ERROR_NAME.COMMAND_NOT_FOUND:
         return `
 The command is not recognized in the system.
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "KEYWORD_MISSING":
+      case ERROR_NAME.KEYWORD_MISSING:
         return `
-Keyword missing in key-value pair '${err.keyValuePair}'. Please ensure that all the specific command keywords are written.
+Keyword missing. Please ensure that all the specific command keywords are written.
 The keywords for the command '${err.commandName}' are: [${err.commandKeywords}].
 Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "KEYWORD_WRITTEN_INCORRECTLY":
+      case ERROR_NAME.KEYWORD_WRITTEN_INCORRECTLY:
         return `
 Key-value pair '${err.keyValuePair}' written incorrectly.
 Please ensure that all the specific command keywords are written correctly in the form of 'key:value' pairs.
@@ -118,7 +133,7 @@ Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "KEYWORD_REDUNDANT":
+      case ERROR_NAME.KEYWORD_REDUNDANT:
         return `
 Keyword '${err.keywordName}' is redundant.
 Please ensure that only the specific command keywords are written.
@@ -127,7 +142,7 @@ Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "VALUE_MISSING":
+      case ERROR_NAME.VALUE_MISSING:
         return `
 Value for the keyword '${err.keywordName}' is missing. Expected 'key:value' pair.
 The accepted values for the keyword '${err.keywordName}' are: [${err.acceptedValues}].
@@ -135,7 +150,7 @@ Exemple of a valid user command: execute create:video for:youtube-channelname.
 Write 'help commands' to list all the available user commands.
 `;
 
-      case "VALUE_NOT_ACCEPTED":
+      case ERROR_NAME.VALUE_NOT_ACCEPTED:
         return `
 Value '${err.valueName}' for the keyword '${err.keywordName}' is not accepted.
 The accepted values for the keyword '${err.keywordName}' are: [${err.acceptedValues}]
@@ -144,7 +159,7 @@ Write 'help commands' to list all the available user commands.
 `;
 
       default:
-        return "";
+        let _neverTest: never = err;
     }
   }
 }

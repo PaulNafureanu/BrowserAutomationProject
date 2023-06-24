@@ -15,67 +15,87 @@ class CommandValidator {
     /**
      * Validation Rule: Every user command must start with the keyword "execute".
      * @param userInput the string input that the user typed in CLI.
-     * @returns true if the user command is valid, an error otherwise.
+     * @returns a validation result object.
      */
     static validateExecuteRule(userInput) {
         if (!userInput.includes("execute")) {
             return {
                 isValid: false,
-                error: { name: "EXECUTE_NOT_FOUND" },
+                commandType: undefined,
+                commandInput: undefined,
+                error: { code: CommandMessager_1.ERROR_NAME.EXECUTE_NOT_FOUND },
             };
         }
-        return { isValid: true, data: undefined };
+        return {
+            isValid: true,
+            commandType: undefined,
+            commandInput: undefined,
+            error: undefined,
+        };
     }
     /**
      * Validation Rule: Every user command must be identified with one command type definition.
      * @param userInput the string input that the user typed in CLI.
-     * @returns the command type if the user command is valid, an error otherwise.
+     * @returns a validation result object.
      */
     static validateCommandTypeRule(userInput) {
         const commandType = CommandDefiner_1.CommandDefiner.getCommandType(userInput);
         if (!commandType) {
             return {
                 isValid: false,
-                error: { name: "COMMAND_NOT_FOUND" },
+                commandType: undefined,
+                commandInput: undefined,
+                error: { code: CommandMessager_1.ERROR_NAME.COMMAND_NOT_FOUND },
             };
         }
-        return { isValid: true, data: commandType };
+        return {
+            isValid: true,
+            commandType: commandType,
+            commandInput: undefined,
+            error: undefined,
+        };
     }
     /**
      * Validation Rule: The number of truthy keywords in the command type definition has to equal the number of command parts.
      * @param userInput the string input that the user typed in CLI.
      * @param commandType the command type definition identified with the user command.
-     * @returns true if the user command is valid, an error otherwise.
+     * @returns a validation result object.
      */
     static validateCommandPartsRule(userInput, commandType) {
-        const commandParts = userInput.split(" ");
-        const validCommandPartsLen = commandParts.filter((part) => part !== "" && part !== " ").length;
-        const numberOfTruthyKeywords = CommandDefiner_1.CommandDefiner.getNumberOfTruthyKeywords(commandType);
-        if (validCommandPartsLen === numberOfTruthyKeywords)
-            return { isValid: true, data: undefined };
+        const validCommandParts = userInput
+            .split(" ")
+            .filter((part) => part !== "" && part !== " ");
+        if (validCommandParts.length === commandType.CommandKeys.length)
+            return {
+                isValid: true,
+                commandType: commandType,
+                commandInput: undefined,
+                error: undefined,
+            };
         else {
-            // const commandKeywords = Object.keys(commandType.CommandDefinition);
-            const specificCommandKeywords = CommandDefiner_1.CommandDefiner.getTruthyKeywordList(commandType);
-            const redundantKey = CommandDefiner_1.CommandDefiner.getRedundantKeyword(commandParts, specificCommandKeywords);
-            if (redundantKey) {
+            const redundantCommandPart = CommandDefiner_1.CommandDefiner.getRedundantCommandPart(validCommandParts, commandType.CommandKeys);
+            if (redundantCommandPart) {
                 return {
                     isValid: false,
+                    commandType: commandType,
+                    commandInput: undefined,
                     error: {
-                        name: "KEYWORD_REDUNDANT",
-                        keywordName: redundantKey,
+                        code: CommandMessager_1.ERROR_NAME.KEYWORD_REDUNDANT,
+                        keywordName: redundantCommandPart,
                         commandName: commandType.CommandName,
-                        commandKeywords: specificCommandKeywords,
+                        commandKeywords: commandType.CommandKeys.map((key) => CommandDefiner_1.CommandKeys[key]),
                     },
                 };
             }
             else {
                 return {
                     isValid: false,
+                    commandType: commandType,
+                    commandInput: undefined,
                     error: {
-                        name: "KEYWORD_MISSING",
-                        keyValuePair: "",
+                        code: CommandMessager_1.ERROR_NAME.KEYWORD_MISSING,
                         commandName: commandType.CommandName,
-                        commandKeywords: specificCommandKeywords,
+                        commandKeywords: commandType.CommandKeys.map((key) => CommandDefiner_1.CommandKeys[key]),
                     },
                 };
             }
@@ -89,49 +109,54 @@ class CommandValidator {
      */
     static validateAcceptedValuesRule(userInput, commandType) {
         // Define the command parts (key-value pairs)
-        const commandParts = userInput.split(" ");
-        const validCommandParts = commandParts.filter((part) => part !== "" && part !== " " && part !== "execute");
-        // Define the list of truthy keywords used for this user command from the command type definition
-        let userCommandKeywordList = CommandDefiner_1.CommandDefiner.getTruthyKeywordList(commandType);
+        const validCommandParts = userInput
+            .split(" ")
+            .filter((part) => part !== "" && part !== " " && part !== "execute");
         let commandInput = {};
-        for (const keyValue of validCommandParts) {
-            const [keywordCommand, keywordValue] = keyValue.split(":");
+        const commandKeyList = commandType.CommandKeys.map((key) => CommandDefiner_1.CommandKeys[key]);
+        for (const keyValuePair of validCommandParts) {
+            const [commandKey, commandValue] = keyValuePair.split(":");
+            const key = CommandDefiner_1.CommandDefiner.getKeyFromString(keyValuePair, commandType.CommandKeys);
             //Check if the keyword command is an accepted keyword by the command type
-            if (!userCommandKeywordList.includes(keywordCommand)) {
-                const keyword = CommandDefiner_1.CommandDefiner.getKeywordFromString(keyValue, userCommandKeywordList);
-                if (keyword) {
+            if (!commandKeyList.includes(commandKey)) {
+                if (key !== undefined && commandKey[key]) {
                     return {
                         isValid: false,
+                        commandType: commandType,
+                        commandInput: undefined,
                         error: {
-                            name: "KEYWORD_WRITTEN_INCORRECTLY",
-                            keyValuePair: keyValue,
-                            keywordName: keyword,
-                            acceptedValues: CommandDefiner_1.CommandDefiner.getAcceptedValuesForKeyword(keyword),
+                            code: CommandMessager_1.ERROR_NAME.KEYWORD_WRITTEN_INCORRECTLY,
+                            keyValuePair: keyValuePair,
+                            keywordName: CommandDefiner_1.CommandKeys[key],
+                            acceptedValues: CommandDefiner_1.CommandDefiner.getAcceptedValues(CommandDefiner_1.CommandKeys[key]),
                         },
                     };
                 }
                 else {
                     return {
                         isValid: false,
+                        commandType: commandType,
+                        commandInput: undefined,
                         error: {
-                            name: "KEYWORD_MISSING",
+                            code: CommandMessager_1.ERROR_NAME.KEYWORD_MISSING,
                             commandName: commandType.CommandName,
-                            commandKeywords: userCommandKeywordList,
-                            keyValuePair: keyValue,
+                            commandKeywords: commandKeyList,
                         },
                     };
                 }
             }
             //Check if the value of the keyword is an accepted value for that keyword type
-            const acceptedValues = CommandDefiner_1.CommandDefiner.getAcceptedValuesForKeyword(keywordCommand);
-            if (!(acceptedValues && acceptedValues.includes(keywordValue))) {
-                if (keywordValue) {
+            const acceptedValues = CommandDefiner_1.CommandDefiner.getAcceptedValues(commandKey);
+            if (!(acceptedValues && acceptedValues.includes(commandValue))) {
+                if (commandValue) {
                     return {
                         isValid: false,
+                        commandType: commandType,
+                        commandInput: undefined,
                         error: {
-                            name: "VALUE_NOT_ACCEPTED",
-                            keywordName: keywordCommand,
-                            valueName: keywordValue,
+                            code: CommandMessager_1.ERROR_NAME.VALUE_NOT_ACCEPTED,
+                            keywordName: commandKey,
+                            valueName: commandValue,
                             acceptedValues: acceptedValues,
                         },
                     };
@@ -139,19 +164,27 @@ class CommandValidator {
                 else {
                     return {
                         isValid: false,
+                        commandType: commandType,
+                        commandInput: undefined,
                         error: {
-                            name: "VALUE_MISSING",
-                            keywordName: keywordCommand,
+                            code: CommandMessager_1.ERROR_NAME.VALUE_MISSING,
+                            keywordName: commandKey,
                             acceptedValues: acceptedValues,
                         },
                     };
                 }
             }
-            commandInput[keywordCommand] = keywordValue;
+            // Set the command input keys and values
+            if (key !== undefined && acceptedValues.includes(commandValue)) {
+                const keyword = CommandDefiner_1.CommandKeys[key];
+                commandInput[key] = commandValue;
+            }
         }
         return {
             isValid: true,
-            data: commandInput,
+            commandType: commandType,
+            commandInput: commandInput,
+            error: undefined,
         };
     }
     /**
@@ -169,9 +202,9 @@ class CommandValidator {
         if (ruleResult.isValid) {
             //Check second rule
             ruleResult = CommandValidator.validateCommandTypeRule(prepUserInput);
-            if (ruleResult.isValid) {
+            if (ruleResult.isValid && ruleResult.commandType) {
                 //Check third rule
-                commandType = ruleResult.data;
+                commandType = ruleResult.commandType;
                 ruleResult = CommandValidator.validateCommandPartsRule(prepUserInput, commandType);
                 if (ruleResult.isValid) {
                     // Check third rule
@@ -180,7 +213,8 @@ class CommandValidator {
                         return {
                             isValid: true,
                             commandType: commandType,
-                            commandInput: ruleResult.data,
+                            commandInput: ruleResult.commandInput,
+                            error: undefined,
                         };
                     }
                     else {
@@ -201,11 +235,15 @@ class CommandValidator {
         // Write the error if there is one.
         if (error) {
             CommandMessager_1.CommandMessager.ConsoleErrorWriter(CommandMessager_1.CommandMessager.getErrorMessages(error));
+            // Add string representation of the error name
+            if (error)
+                error.name = CommandMessager_1.ERROR_NAME[error.code];
         }
         return {
             isValid: false,
-            commandType: commandType,
+            commandType: ruleResult.commandType,
             commandInput: undefined,
+            error: error,
         };
     }
 }
