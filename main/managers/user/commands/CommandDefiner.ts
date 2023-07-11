@@ -13,7 +13,6 @@ export enum CommandKeys {
   execute,
   create,
   for,
-  newK,
 }
 
 // A union of valid command keys from the above enum.
@@ -51,10 +50,6 @@ export class CommandDefiner {
       CommandName: "SimpleUserCommand",
       CommandKeys: [CommandKeys.execute, CommandKeys.create, CommandKeys.for],
     },
-    {
-      CommandName: "New command",
-      CommandKeys: [CommandKeys.execute, CommandKeys.newK],
-    },
   ] as const;
 
   // Set here the accepted values for command keywords:
@@ -62,7 +57,6 @@ export class CommandDefiner {
     execute: [],
     create: ["video"],
     for: ["youtube-channel1", "youtube-channel2"],
-    newK: ["v1"],
   } as const;
 
   private constructor() {}

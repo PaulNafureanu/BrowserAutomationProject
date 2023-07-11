@@ -1,11 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BrowserManager = void 0;
-const ManagerObject_1 = require("../abstractions/ManagerObject");
-class BrowserManager extends ManagerObject_1.ManagerObject {
-    constructor() {
-        super();
-    }
+class BrowserManager {
+    constructor() { }
     static getInstance() {
         if (!BrowserManager.instance) {
             BrowserManager.instance = new BrowserManager();

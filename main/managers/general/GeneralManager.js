@@ -1,40 +1,69 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneralManager = void 0;
-const ManagerObject_1 = require("../abstractions/ManagerObject");
+const WinServer_1 = require("../../processes/WinServer");
+const Process_1 = require("./Process");
 /**
- * App = Input + Process + Ouput + Logger.
- * Process -> session1 + session2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
+ * App Session = Input + Process + Ouput + Logger.
+ * One session -> process1 + process2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
  *
- * A run of the BAP App consists of:
+ * A run (or a session) of the BAP App consists of:
  * - Capturing the input: Responsibility delegated to the User Manager.
  * - Processing the input: Responsibility delegated to the General Manager.
  * - Generating the output: Responsibility delegated to the Browser and Windows Manager.
  * - Logging the details of the run: Responsibility delegated to the Log Manager.
  *
- * A process can be composed of multiple sessions that run either in parallel or sequentially.
- * Each session, in turn, consists of different sequential stages. In other words:
- * The process is made up of individual sessions, and these sessions can either run concurrently (in parallel)
- * or one after the other (sequentially). Furthermore, each session can be further broken down
- * into different sequential stages, representing the steps or components within that session.
+ * One session can be composed of multiple processes that run either in parallel or sequentially.
+ * Each process, in turn, consists of different sequential stages. In other words:
+ * The session is made up of individual processes, and these processes can either run concurrently (in parallel)
+ * or one after the other (sequentially). Furthermore, each process can be further broken down
+ * into different sequential stages (steps), representing the steps or components within that process.
  */
-class GeneralManager extends ManagerObject_1.ManagerObject {
-    constructor() {
-        super();
+class GeneralManager {
+    constructor() { }
+    // Set the initial values for the current session of the app.
+    static setup() {
+        console.log("Setup started");
+        return new WinServer_1.WinServer();
     }
-    static getInstance() {
-        if (!GeneralManager.instance) {
-            GeneralManager.instance = new GeneralManager();
-        }
-        return GeneralManager.instance;
+    static async process(func) {
+        const processInstance = new Process_1.Process();
+        GeneralManager.processes.push(processInstance);
+        await Process_1.Process[func](processInstance)
+            .catch((err) => console.log(err))
+            .finally(() => GeneralManager.processes.filter((p) => p.id !== processInstance.id));
     }
+    // Clean the session's app
+    static cleanup(server) {
+        console.log("Cleanup started");
+        server.quit();
+    }
+    // Run the command in this session
     static run(userCommandInput) {
-        // switch(command name or command type)
-        // case: do something with the input command values
-        console.log("GM: ", userCommandInput);
+        // Run the setup for initialization of the session, if it is for the first time:
+        if (!GeneralManager.server)
+            GeneralManager.server = GeneralManager.setup();
+        // Manage processes
+        const { commandInput, commandType } = userCommandInput;
+        switch (commandType.CommandName) {
+            case "UndefinedCommand": {
+                return;
+            }
+            case "SimpleUserCommand": {
+                GeneralManager.process("start");
+                break;
+            }
+            default: {
+                const _checkNever = commandType;
+            }
+        }
+        // Close the session, if there are no processes left to run
+        if (GeneralManager.processes.length === 0)
+            GeneralManager.cleanup(GeneralManager.server);
     }
 }
 exports.GeneralManager = GeneralManager;
+GeneralManager.processes = [];
 // import path from "node:path";
 // import fs from "node:fs";
 // import { WebDriverObject } from "./browser/abstractions/WebDriverObject";

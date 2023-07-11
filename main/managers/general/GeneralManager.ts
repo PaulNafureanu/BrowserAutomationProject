@@ -1,44 +1,80 @@
-import { ManagerObject } from "../abstractions/ManagerObject";
+import { WinServer } from "../../processes/WinServer";
 import { UserCommandInput } from "../user/UserManager";
 import { CommandType } from "../user/commands/CommandDefiner";
-import { CommandInput } from "../user/commands/CommandValidator";
+import { Process } from "./Process";
 
 /**
- * App = Input + Process + Ouput + Logger.
- * Process -> session1 + session2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
+ * App Session = Input + Process + Ouput + Logger.
+ * One session -> process1 + process2 + ... -> stage11 + stage12 + ... + stage21 + stage22 + ...
  *
- * A run of the BAP App consists of:
+ * A run (or a session) of the BAP App consists of:
  * - Capturing the input: Responsibility delegated to the User Manager.
  * - Processing the input: Responsibility delegated to the General Manager.
  * - Generating the output: Responsibility delegated to the Browser and Windows Manager.
  * - Logging the details of the run: Responsibility delegated to the Log Manager.
  *
- * A process can be composed of multiple sessions that run either in parallel or sequentially.
- * Each session, in turn, consists of different sequential stages. In other words:
- * The process is made up of individual sessions, and these sessions can either run concurrently (in parallel)
- * or one after the other (sequentially). Furthermore, each session can be further broken down
- * into different sequential stages, representing the steps or components within that session.
+ * One session can be composed of multiple processes that run either in parallel or sequentially.
+ * Each process, in turn, consists of different sequential stages. In other words:
+ * The session is made up of individual processes, and these processes can either run concurrently (in parallel)
+ * or one after the other (sequentially). Furthermore, each process can be further broken down
+ * into different sequential stages (steps), representing the steps or components within that process.
  */
 
-export class GeneralManager extends ManagerObject {
-  private static instance: GeneralManager;
-  private constructor() {
-    super();
+export class GeneralManager {
+  private static processes: Process[] = [];
+  private static server: WinServer | undefined;
+  private constructor() {}
+
+  // Set the initial values for the current session of the app.
+  private static setup() {
+    console.log("Setup started");
+    return new WinServer();
   }
 
-  public static getInstance() {
-    if (!GeneralManager.instance) {
-      GeneralManager.instance = new GeneralManager();
-    }
-    return GeneralManager.instance;
+  private static async process<F extends keyof typeof Process>(
+    func: Exclude<F, "prototype">
+  ) {
+    const processInstance = new Process();
+    GeneralManager.processes.push(processInstance);
+    await Process[func](processInstance)
+      .catch((err) => console.log(err))
+      .finally(() =>
+        GeneralManager.processes.filter((p) => p.id !== processInstance.id)
+      );
   }
 
+  // Clean the session's app
+  private static cleanup(server: WinServer) {
+    console.log("Cleanup started");
+    server.quit();
+  }
+
+  // Run the command in this session
   public static run<CT extends CommandType>(
     userCommandInput: UserCommandInput<CT>
   ) {
-    // switch(command name or command type)
-    // case: do something with the input command values
-    console.log("GM: ", userCommandInput);
+    // Run the setup for initialization of the session, if it is for the first time:
+    if (!GeneralManager.server) GeneralManager.server = GeneralManager.setup();
+
+    // Manage processes
+    const { commandInput, commandType } = userCommandInput;
+
+    switch (commandType.CommandName) {
+      case "UndefinedCommand": {
+        return;
+      }
+      case "SimpleUserCommand": {
+        GeneralManager.process("start");
+        break;
+      }
+      default: {
+        const _checkNever: never = commandType;
+      }
+    }
+
+    // Close the session, if there are no processes left to run
+    if (GeneralManager.processes.length === 0)
+      GeneralManager.cleanup(GeneralManager.server);
   }
 }
 

@@ -1,10 +1,6 @@
-import { ManagerObject } from "../abstractions/ManagerObject";
-
-export class BrowserManager extends ManagerObject {
+export class BrowserManager {
   private static instance: BrowserManager;
-  private constructor() {
-    super();
-  }
+  private constructor() {}
 
   public static getInstance() {
     if (!BrowserManager.instance) {

@@ -5,13 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserManager = void 0;
 const node_readline_1 = __importDefault(require("node:readline"));
-const ManagerObject_1 = require("../abstractions/ManagerObject");
 const GeneralManager_1 = require("../general/GeneralManager");
 const CommandValidator_1 = require("./commands/CommandValidator");
-class UserManager extends ManagerObject_1.ManagerObject {
-    constructor() {
-        super();
-    }
+class UserManager {
+    constructor() { }
     // Function to handle user input
     static handleUserInput(input) {
         // Process user input and execute corresponding functions

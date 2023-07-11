@@ -1,5 +1,4 @@
 import readline from "node:readline";
-import { ManagerObject } from "../abstractions/ManagerObject";
 import { GeneralManager } from "../general/GeneralManager";
 import { CommandInput, CommandValidator } from "./commands/CommandValidator";
 import { CommandType } from "./commands/CommandDefiner";
@@ -9,16 +8,14 @@ export type UserCommandInput<CT extends CommandType> = {
   commandInput: CommandInput<CT>;
 };
 
-export class UserManager extends ManagerObject {
+export class UserManager {
   private static instance: UserManager;
   private static reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  private constructor() {
-    super();
-  }
+  private constructor() {}
 
   // Function to handle user input
   public static handleUserInput(input: string) {

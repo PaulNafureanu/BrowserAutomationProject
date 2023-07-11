@@ -1,10 +1,6 @@
-import { ManagerObject } from "../abstractions/ManagerObject";
-
-export class WindowsManager extends ManagerObject {
+export class WindowsManager {
   private static instance: WindowsManager;
-  private constructor() {
-    super();
-  }
+  private constructor() {}
 
   public static getInstance() {
     if (!WindowsManager.instance) {

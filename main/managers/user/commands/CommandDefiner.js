@@ -16,7 +16,6 @@ var CommandKeys;
     CommandKeys[CommandKeys["execute"] = 0] = "execute";
     CommandKeys[CommandKeys["create"] = 1] = "create";
     CommandKeys[CommandKeys["for"] = 2] = "for";
-    CommandKeys[CommandKeys["newK"] = 3] = "newK";
 })(CommandKeys || (exports.CommandKeys = CommandKeys = {}));
 /**
  *  A utility class to define and group types of user commands,
@@ -121,16 +120,11 @@ CommandDefiner.Types = [
         CommandName: "SimpleUserCommand",
         CommandKeys: [CommandKeys.execute, CommandKeys.create, CommandKeys.for],
     },
-    {
-        CommandName: "New command",
-        CommandKeys: [CommandKeys.execute, CommandKeys.newK],
-    },
 ];
 // Set here the accepted values for command keywords:
 CommandDefiner.AcceptedValues = {
     execute: [],
     create: ["video"],
     for: ["youtube-channel1", "youtube-channel2"],
-    newK: ["v1"],
 };
 //# sourceMappingURL=CommandDefiner.js.map
